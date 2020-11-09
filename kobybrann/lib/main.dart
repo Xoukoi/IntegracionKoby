@@ -11,6 +11,8 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:kobybrann/widgets/emoji_picker_widget.dart';
 import 'package:kobybrann/widgets/input_widget.dart';
 
+import 'widgets/emoji_picker_widget.dart';
+
 /*
 //aca va el stateful de emojis
 class MainPage extends StatefulWidget {
@@ -146,6 +148,7 @@ class _LandingScreenState extends State<LandingScreen> {
   String te = "";
   File archivoImagen;
   File archivoImagen2;
+  String emoji;
   DragBox colorFondoSet;
   Color caughtColor;
 
@@ -163,9 +166,12 @@ class _LandingScreenState extends State<LandingScreen> {
   double _currentRotation;
   bool _inAction = false;*/
 
-  void onEmojiSelected(String emoji) => setState(() {
-        controller.text = controller.text + emoji;
-      });
+  void onEmojiSelected(String emojiEscogido) => setState(() {
+    /*controller.text = controller.text + emoji;
+        print(controller.text);*/
+    this.emoji = emojiEscogido;
+    _escogerEmoji();
+  });
 
   Future toggleEmojiKeyboard() async {
     if (isKeyboardVisible) {
@@ -529,7 +535,13 @@ class _LandingScreenState extends State<LandingScreen> {
   }
 
   Widget _escogerImagen() {
+    //Emoji???
     if (archivoImagen == null &&
+        caughtColor == null &&
+        archivoImagen2 == null &&
+        emoji != null) {
+      return Text(emoji);
+    } else if (archivoImagen == null &&
         caughtColor == null &&
         archivoImagen2 == null) {
       return Container(
@@ -562,7 +574,8 @@ class _LandingScreenState extends State<LandingScreen> {
         width: 350,
         height: 350,
       );
-    } else if (archivoImagen == null &&
+    }
+    else if (archivoImagen == null &&
         caughtColor != null &&
         archivoImagen2 == null) {
       return Positioned(
@@ -573,10 +586,10 @@ class _LandingScreenState extends State<LandingScreen> {
             caughtColor = color;
           },
           builder: (
-            BuildContext context,
-            List<dynamic> accepted,
-            List<dynamic> rejected,
-          ) {
+              BuildContext context,
+              List<dynamic> accepted,
+              List<dynamic> rejected,
+              ) {
             return Center(
               child: Column(
                 children: [
@@ -585,7 +598,7 @@ class _LandingScreenState extends State<LandingScreen> {
                     height: 350.0,
                     decoration: BoxDecoration(
                       color:
-                          accepted.isEmpty ? caughtColor : Colors.grey.shade200,
+                      accepted.isEmpty ? caughtColor : Colors.grey.shade200,
                     ),
                     child: Center(
                       child: Text("Objeto a modificar"),
@@ -610,6 +623,15 @@ class _LandingScreenState extends State<LandingScreen> {
     }
   }
 
+  Widget _escogerEmoji() {
+    if (emoji == null) {
+      return Text("No emoji escogido");
+    } else {
+      Navigator.of(context).pop();
+      return showAlertDialog(context, true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // final screen = MediaQuery.of(context).size;
@@ -618,185 +640,235 @@ class _LandingScreenState extends State<LandingScreen> {
       appBar: AppBar(
         title: new Text("Integrando"),
       ),
-      body: Container(
-        child: Column(
-          children: [
-            Center(
-              child: Container(
-                child: Text("DISEÑAR LAYOUT"),
-                margin: EdgeInsets.only(top: 30),
+      body: SingleChildScrollView(
+        child: Container(
+          child: Column(
+            children: [
+              Center(
+                child: Container(
+                  child: Text("DISEÑAR LAYOUT"),
+                  margin: EdgeInsets.only(top: 30),
+                ),
               ),
-            ),
-            Container(
-              child: Row(
-                children: [
-                  Center(
-                    child: Container(
-                      child: RaisedButton(
-                          onPressed: () {
-                            caughtColor = null;
-                            _showChoiceDialog(context);
-                          },
-                          child: Text(
-                            "JPG",
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.white,
-                            ),
-                          ),
-                          color: Colors.lightBlue,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                              side: BorderSide(
-                                  color: Color.fromARGB(30, 0, 0, 0)))),
-                      margin: EdgeInsets.only(top: 50, left: 30),
-                      width: 55,
-                    ),
-                  ),
-                  Center(
-                    child: Container(
-                      child: RaisedButton(
-                        onPressed: () {
-                          archivoImagen = null;
-                          _showChoiceDialogColor(context);
-                        },
-                        child: Icon(
-                          Icons.colorize,
-                          color: Colors.white,
-                        ),
-                        color: Colors.lightBlue,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side:
-                                BorderSide(color: Color.fromARGB(30, 0, 0, 0))),
-                      ),
-                      margin: EdgeInsets.only(top: 50, left: 30),
-                      width: 50,
-                    ),
-                  ),
-                  Center(
-                    child: Container(
-                      child: RaisedButton(
-                          onPressed: () {
-                            _showChoiceDialog2(context);
-                          },
-                          child: Text(
-                            "PNG",
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.white,
-                            ),
-                          ),
-                          color: Colors.lightBlue,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                              side: BorderSide(
-                                  color: Color.fromARGB(30, 0, 0, 0)))),
-                      margin: EdgeInsets.only(top: 50, left: 30),
-                      width: 55,
-                    ),
-                  ),
-                  Center(
-                    child: Container(
-                      child: WillPopScope(
-                        onWillPop: onBackPress,
-                        child: Column(
-                          children: <Widget>[
-                            /*Expanded(
-                              child: ListView(
-                                reverse: true,
-                                physics: BouncingScrollPhysics(),
-                                children: messages
-                                    .map((message) =>
-                                        MessageWidget(message: message))
-                                    .toList(),
+              Container(
+                child: Row(
+                  children: [
+                    Center(
+                      child: Container(
+                        child: RaisedButton(
+                            onPressed: () {
+                              caughtColor = null;
+                              _showChoiceDialog(context);
+                            },
+                            child: Text(
+                              "JPG",
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.white,
                               ),
-                            ),*/
-                            InputWidget(
-                              onBlurred: toggleEmojiKeyboard,
-                              controller: controller,
-                              isEmojiVisible: isEmojiVisible,
-                              isKeyboardVisible: isKeyboardVisible,
-                              onSentMessage: (message) =>
-                                  setState(() => messages.insert(0, message)),
-                              //  setState(() => print(controller.text)),
                             ),
-                            Offstage(
-                              child: EmojiPickerWidget(
-                                  onEmojiSelected: onEmojiSelected),
-                              offstage: !isEmojiVisible,
-                            ),
-                          ],
-                        ),
+                            color: Colors.lightBlue,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                side: BorderSide(
+                                    color: Color.fromARGB(30, 0, 0, 0)))),
+                        margin: EdgeInsets.only(top: 50, left: 30),
+                        width: 55,
                       ),
-                      margin: EdgeInsets.only(top: 50, left: 25),
-                      //width: 50,
                     ),
-                  ),
-
-                  /* child: RaisedButton(
+                    Center(
+                      child: Container(
+                        child: RaisedButton(
                           onPressed: () {
-                            _eltexto(context);
+                            archivoImagen = null;
+                            _showChoiceDialogColor(context);
                           },
                           child: Icon(
-                            Icons.tag_faces,
+                            Icons.colorize,
                             color: Colors.white,
                           ),
                           color: Colors.lightBlue,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                              side: BorderSide(
-                                  color: Color.fromARGB(30, 0, 0, 0))))*/
-                ],
-              ),
-            ),
-            Stack(children: [
-              //aca van los widget que se convertiran, es un objeto por
-              WidgetToImage(builder: (key) {
-                this.key1 = key;
+                              borderRadius: BorderRadius.circular(20),
+                              side:
+                              BorderSide(color: Color.fromARGB(30, 0, 0, 0))),
+                        ),
+                        margin: EdgeInsets.only(top: 50, left: 30),
+                        width: 50,
+                      ),
+                    ),
+                    Center(
+                      child: Container(
+                        child: RaisedButton(
+                            onPressed: () {
+                              _showChoiceDialog2(context);
+                            },
+                            child: Text(
+                              "PNG",
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.white,
+                              ),
+                            ),
+                            color: Colors.lightBlue,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                side: BorderSide(
+                                    color: Color.fromARGB(30, 0, 0, 0)))),
+                        margin: EdgeInsets.only(top: 50, left: 30),
+                        width: 55,
+                      ),
+                    ),
+                    IconButton(icon: Icon(Icons.face), onPressed: (){
+                      return showAlertDialog(context, false);
+                    })
+                    /*Center(
+                      child: Container(
+                        child: WillPopScope(
+                          onWillPop: onBackPress,
+                          child: Column(
+                            children: <Widget>[
+                              *//*Expanded(
+                                child: ListView(
+                                  reverse: true,
+                                  physics: BouncingScrollPhysics(),
+                                  children: messages
+                                      .map((message) =>
+                                          MessageWidget(message: message))
+                                      .toList(),
+                                ),
+                              ),*//*
+                              InputWidget(
+                                onBlurred: toggleEmojiKeyboard,
+                                controller: controller,
+                                isEmojiVisible: isEmojiVisible,
+                                isKeyboardVisible: isKeyboardVisible,
+                                onSentMessage: (message) =>
+                                    setState(() => messages.insert(0, message)),
+                                //  setState(() => print(controller.text)),
+                              ),
+                              Offstage(
+                                child: EmojiPickerWidget(
+                                    onEmojiSelected: onEmojiSelected),
+                                offstage: !isEmojiVisible,
+                              ),
+                            ],
+                          ),
+                        ),
+                        margin: EdgeInsets.only(top: 50, left: 25),
+                        //width: 50,
+                      ),
+                    ),*/
 
-                return _escogerImagen();
-              }),
-              WidgetToImage(builder: (key) {
-                this.key2 = key;
-                return _escogerImagen2();
-              }),
-              WidgetToImage(builder: (key) {
-                this.key3 = key;
-                return _textDPrueba();
-              }),
-              buildImage(bytes1),
-              buildImage(bytes2),
-              buildImage(bytes3),
-            ]),
-            Center(
-              child: Container(
-                child: RaisedButton(
-                  color: Colors.lightBlue,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(color: Color.fromARGB(30, 0, 0, 0))),
-                  child: Text(
-                    'Guardar Imagen',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () async {
-                    final bytes1 = await Utils.capture(key1);
-                    final bytes2 = await Utils.capture(key2);
-                    final bytes3 = await Utils.capture(key3);
-
-                    setState(() {
-                      this.bytes1 = bytes1;
-                      this.bytes2 = bytes2;
-                      this.bytes3 = bytes3;
-                    });
-                  },
+                    /* child: RaisedButton(
+                            onPressed: () {
+                              _eltexto(context);
+                            },
+                            child: Icon(
+                              Icons.tag_faces,
+                              color: Colors.white,
+                            ),
+                            color: Colors.lightBlue,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                side: BorderSide(
+                                    color: Color.fromARGB(30, 0, 0, 0))))*/
+                  ],
                 ),
               ),
-            ),
-          ],
+              Stack(children: [
+                //aca van los widget que se convertiran, es un objeto por
+                WidgetToImage(builder: (key) {
+                  this.key1 = key;
+
+                  return _escogerImagen();
+                }),
+                WidgetToImage(builder: (key) {
+                  this.key2 = key;
+                  return _escogerImagen2();
+                }),
+                WidgetToImage(builder: (key) {
+                  this.key3 = key;
+                  return _textDPrueba();
+                }),
+                buildImage(bytes1),
+                buildImage(bytes2),
+                buildImage(bytes3),
+              ]),
+              Center(
+                child: Container(
+                  child: RaisedButton(
+                    color: Colors.lightBlue,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(color: Color.fromARGB(30, 0, 0, 0))),
+                    child: Text(
+                      'Guardar Imagen',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () async {
+                      final bytes1 = await Utils.capture(key1);
+                      final bytes2 = await Utils.capture(key2);
+                      final bytes3 = await Utils.capture(key3);
+
+                      setState(() {
+                        this.bytes1 = bytes1;
+                        this.bytes2 = bytes2;
+                        this.bytes3 = bytes3;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
+  ///Este popup recibe el contexto y otro argumento.
+  ///El segundo argumento es para mostrar un emoji seleccionado o no
+  ///Al llamarlo por primera vez se pasa falso
+  ///Al seleccionar el emoji se pasa true y se esconde el primer popup
+  showAlertDialog(BuildContext context, bool mostrarWidgetSeleccionado) {
+
+    AlertDialog alert;
+
+    if (mostrarWidgetSeleccionado){
+      // Configura el popup
+      alert = AlertDialog(
+          title: Text("Emojis"),
+          content: Text(emoji)
+      );
+    } else {
+      // Configura el popup
+      alert = AlertDialog(
+          title: Text("Emojis"),
+          content: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Center(
+                  //Usé la misma función que ya tenías
+                  child: EmojiPickerWidget(
+                    onEmojiSelected: onEmojiSelected,
+                  ),
+                ),
+              ],
+            ),
+          )
+      );
+    }
+
+    // Muestro el popup
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
 }
